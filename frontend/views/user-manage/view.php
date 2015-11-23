@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\UserInfo */
 
-$this->title = $model->id;
+$this->title = $model->user->username;
 $this->params['breadcrumbs'][] = ['label' => 'User Infos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -23,12 +23,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('Go Back', Yii::$app->request->referrer, ['class' => 'btn btn-default']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
+            [
+                'label' => 'User ID',
+                'value' => $model->user->username,
+            ],
             'full_name',
             'school',
             'etc',
