@@ -21,13 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($user_model, 'username')->textInput(['maxlength' => true])->label('User ID') ?>
 
-        <?= $form->field($user_model, 'email') ?>
-
         <?= $form->field($user_model, 'password')->passwordInput() ?>
 
         <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'school')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($user_model, 'email') ?>
 
         <?= $form->field($model, 'etc')->textInput(['maxlength' => true]) ?>
 
