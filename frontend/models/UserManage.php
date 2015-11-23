@@ -12,6 +12,9 @@ use common\models\UserInfo;
  */
 class UserManage extends UserInfo
 {
+    public $username;
+    public $created_at;
+
     /**
      * @inheritdoc
      */
@@ -20,6 +23,7 @@ class UserManage extends UserInfo
         return [
             [['id'], 'integer'],
             [['full_name', 'school', 'etc'], 'safe'],
+            [['username', 'created_at'], 'safe'],
         ];
     }
 
@@ -43,9 +47,21 @@ class UserManage extends UserInfo
     {
         $query = UserInfo::find();
 
+        $query->joinWith(['user']);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['username'] = [
+            'asc' => ['user.username' => SORT_ASC],
+            'desc' => ['user.username' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['created_at'] = [
+            'asc' => ['user.created_at' => SORT_ASC],
+            'desc' => ['user.created_at' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -61,6 +77,7 @@ class UserManage extends UserInfo
 
         $query->andFilterWhere(['like', 'full_name', $this->full_name])
             ->andFilterWhere(['like', 'school', $this->school])
+            ->andFilterWhere(['like', 'user.username', $this->username])
             ->andFilterWhere(['like', 'etc', $this->etc]);
 
         return $dataProvider;

@@ -7,8 +7,9 @@ use yii\grid\GridView;
 /* @var $searchModel frontend\models\UserManage */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'User Infos';
+$this->title = 'User List';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="user-info-index">
 
@@ -25,10 +26,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            [
+                'label' => 'User ID',
+                'attribute' => 'username',
+                'format'=>'raw',
+                'value' => function($model){
+                 $url = "/user-manage/view";
+
+                 return Html::a($model['user']['username'], [$url, 'id' => $model->id], ['title' => 'Detail View']);
+               },
+            ],
+
             'full_name',
             'school',
-            'etc',
+            [
+                'label' => 'Created Date',
+                'attribute' => 'created_at',
+                'filter' => false,
+                'value' => function($model){
+                    return Yii::$app->formatter->asDatetime($model['user']['created_at'], "php:d-M-Y");
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
