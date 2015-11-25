@@ -87,13 +87,17 @@ class SignupForm extends Model
 
     public function updateUser($user)
     {
-      $user->email = $this->email;
-      $user->setPassword($this->password);
-      $user->removePasswordResetToken();
-      if ($user->save(false)) {
-          return $user;
-      }
+        $user->email = $this->email;
 
-      return null;
+        if (isset($this->password) && trim($this->password)!=='') {
+            $user->setPassword($this->password);
+            $user->removePasswordResetToken();
+        }
+
+        if ($user->save(false)) {
+            return $user;
+        }
+
+        return null;
     }
 }
