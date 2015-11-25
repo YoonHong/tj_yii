@@ -150,7 +150,14 @@ class UserManageController extends Controller
      */
     public function actionDelete($id)
     {
+
         $this->findModel($id)->delete();
+
+        $user =  User::findOne($id);
+        $username = $user->username;
+        $user->delete();
+
+        Yii::$app->getSession()->setFlash('success', $username.' has been successfully deleted!');
 
         return $this->redirect(['index']);
     }
