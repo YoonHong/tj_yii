@@ -10,9 +10,13 @@ use Yii;
  */
 class SignupForm extends Model
 {
+    const SCENARIO_CREATE = 'create';
+    const SCENARIO_UPDATE = 'update';
+
     public $username;
     public $email;
     public $password;
+    public $id;
 
     /**
      * @inheritdoc
@@ -31,10 +35,20 @@ class SignupForm extends Model
             ['email', 'string', 'max' => 255],
  //           ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
-            ['password', 'required'],
+            ['password', 'required', 'on' => self::SCENARIO_CREATE],
             ['password', 'string', 'min' => 6],
+
         ];
     }
+
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_CREATE => ['username', 'email', 'password'],
+            self::SCENARIO_UPDATE => ['email', 'password'],
+        ];
+    }
+
 
     /**
      * Signs user up.
@@ -68,8 +82,18 @@ class SignupForm extends Model
           return $user;
       }
 
-
       return null;
     }
 
+    public function updateUser($user)
+    {
+      $user->email = $this->email;
+      $user->setPassword($this->password);
+      $user->removePasswordResetToken();
+      if ($user->save(false)) {
+          return $user;
+      }
+
+      return null;
+    }
 }

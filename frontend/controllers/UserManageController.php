@@ -10,6 +10,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+
+use common\models\User;
 /**
  * UserManageController implements the CRUD actions for UserInfo model.
  */
@@ -63,6 +65,7 @@ class UserManageController extends Controller
     {
         $model = new UserInfo();
         $user_model =  new SignupForm();
+        $user_model->scenario = SignupForm::SCENARIO_CREATE;
 
         if ($model->load(Yii::$app->request->post())
               && $user_model->load(Yii::$app->request->post())
@@ -79,8 +82,8 @@ class UserManageController extends Controller
               if ($model->save()) {
                   $dbTrans->commit();
                   Yii::$app->getSession()->setFlash('success', $user->username.' has been successfully created!');
-                 
-                  return $this->redirect(['index']);                 
+
+                  return $this->redirect(['index']);
               }
 
           }
@@ -107,11 +110,34 @@ class UserManageController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $user_model =  new SignupForm();
+        $user_model->scenario = SignupForm::SCENARIO_UPDATE;
+
+        $user =  User::findOne($id);
+        $user_model->email = $user->email;
+        $user_model->id = $id;
+
+        if ($model->load(Yii::$app->request->post())
+             && $user_model->load(Yii::$app->request->post())
+             && $model->validate()
+             && $user_model->validate()
+        ) {
+            $dbTrans = Yii::$app->db->beginTransaction();
+
+            if ($model->save() && $user_model->updateUser($user)) {
+                $dbTrans->commit();
+                Yii::$app->getSession()->setFlash('success', $user->username.' has been successfully updated!');
+
+                return $this->redirect(['index']);
+            }
+
+            $dbTrans->rollback();
+            Yii::$app->getSession()->setFlash('error', 'Update User has failed!!!');
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'user_model' => $user_model,
             ]);
         }
     }
