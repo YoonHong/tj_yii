@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="form-group">
             <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>
+            <?= Html::a('Go Back', Yii::$app->request->referrer, ['class' => 'btn btn-default']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>
